@@ -131,18 +131,9 @@
                     console.log(err);
                 })                
             },
-    
-            pruebaApi()
-            {
-                // axios.get("https://jsonplaceholder.typicode.com/todos").then(response => {
-                //     console.log('Esto es una prueb para consumir api',response);
-                // })
-            }
-
+             //esto es una prueba de actualizacion de github
         },   
-         created: function(){
-               this.pruebaApi();
-            },
+
         mounted(){
             this.GetUsuarios();
         },
