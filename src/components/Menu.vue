@@ -65,7 +65,7 @@
 
 <script>
      import axios from "axios";
-
+    import swal from "sweetalert";
     export default{
         name: "App",
         data(){
@@ -109,7 +109,7 @@
             deleteUsuarios(id){
                     axios.delete("http://localhost:33314/api/Usuarios/"+id).then(response => {
                         console.log(response)
-                        alert("Usuario Eliminado");
+                        swal("Usuario eliminado","", "success");
                     }).catch(err => {                      
                         console.log(err);
                     });
@@ -123,7 +123,6 @@
                         estado: false,
   
                 }
-
                 axios.put("http://localhost:33314/api/Usuarios/"+Id, updusuario).then(response => {
                     
                     console.log(response);
