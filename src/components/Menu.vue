@@ -42,25 +42,67 @@
                     class="list-group-item d-flex justify-content-between">
                 
                     <span class="cursor" v-bind:class="{'text-success':tarea.estado}"
-                    @click="editarTarea(index,tarea)">
+                    @click="putEstado(tarea.estado,index)">
                         <i v-bind:class="[tarea.estado ? 'fa-solid fa-circle-check' :' far fa-circle']" ></i>
                         <!-- <i @click="[tarea.estado == true ? 'fa-solid fa-circle-check' : 'far fa-circle']"></i> -->
                     </span>                  
                     {{tarea.nombre}}
+                    {{tarea.apellido}}
 
                     <div>
-                        <span class="text-danger cursor" style="margin: 10px" @click="PutUsuarios(tarea.id)">
-                            <i class="fa-solid fa-pen"></i>
-                        </span>
+                            <span class="text-danger cursor" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin: 10px" >
+                                <i class="fa-solid fa-pen"></i>
+                            </span>
                         <span class="text-danger cursor" @click="deleteUsuarios(tarea.id)">
                             <i  class="fas fa-trash-alt"></i>
                         </span>
                     </div>
+
+                    <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Editar Informacion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="form-label">Nombre</label>
+                                        <input type="text" class="form-control"  v-model="updnombre"/>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="form-label">Apellido</label>
+                                        <input type="text" class="form-control" v-model="updapellido" />
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <label class="form-label">Ciudad</label>
+                                        <input class="form-control" v-model="updciudad" type="text"/>     
+                                    </div>
+                                    <br/>
+                                </div>
+                        </form> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" @click="PutUsuarios(tarea.id)" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
                 </li>
             </ul>
             <br>
-        </div>
-    </div>
+        </div>  
+    </div>  
+
+
 </template>
 
 <script>
@@ -70,21 +112,25 @@
         name: "App",
         data(){
             return {
+                showModal : true,
                 id: '',
                 nombre: '',
                 apellido: '',
                 estado: '',
                 ciudad: '',
                 listado: [],
-                loading : false
+                loading : false,
+                updnombre : '',
+                updapellido : '',
+                updciudad : ''
             }
         },
         methods:{
-
             GetUsuarios(){
                 axios.get("http://localhost:33314/api/Usuarios").then(response => {
                     console.log(response);
                     this.listado = response.data;
+                    console.log(this.listado);
                 }).catch(error => {
                     console.log(error);
                 })
@@ -96,15 +142,21 @@
                         apellido: this.apellido,
                         ciudad: this.ciudad,
                         estado: false,
-  
                 }
-                axios.post("http://localhost:33314/api/Usuarios", usuario).then(response => {
-                    console.log(response);
-                }).catch(error => {
-                    console.log(error);
-                })
-                
-                console.log(usuario);
+                if(this.nombre == "" && this.apellido == "" && this.ciudad == "")
+                {
+                    alert("Ingrese los datos para poder agregar")
+                }
+                else{
+                    axios.post("http://localhost:33314/api/Usuarios", usuario).then(response => {
+                        console.log(response);
+                        
+                    }).catch(error => {
+                        console.log(error);
+                    })
+                    
+                    console.log(usuario);
+                }
             },
             deleteUsuarios(id){
                     axios.delete("http://localhost:33314/api/Usuarios/"+id).then(response => {
@@ -117,18 +169,28 @@
             PutUsuarios(Id){
                 const updusuario = {
                         id: Id,
-                        nombre: this.nombre,
-                        apellido: this.apellido,
-                        ciudad: this.ciudad,
+                        nombre: this.updnombre,
+                        apellido: this.updapellido,
+                        ciudad: this.updciudad,
                         estado: false,
-  
                 }
-                axios.put("http://localhost:33314/api/Usuarios/"+Id, updusuario).then(response => {
-                    
+                axios.put("http://localhost:33314/api/Usuarios/"+Id, updusuario).then(response => {                   
+                    console.log(response);
+                    console.log(updusuario);
+                }).catch(err => {
+                    console.log(err);
+                });               
+            },
+            putEstado(Id){
+                const updEstado = {
+                    id : Id,
+                    estado : !this.estado
+                }
+                axios.put("http://localhost:33314/api/Usuarios/"+ Id, updEstado).then(response => {
                     console.log(response);
                 }).catch(err => {
                     console.log(err);
-                })                
+                });
             },
              //esto es una prueba de actualizacion de github
         },   
